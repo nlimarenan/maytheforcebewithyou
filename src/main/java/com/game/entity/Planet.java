@@ -1,16 +1,18 @@
 package com.game.entity;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
+
 @DynamoDBTable(tableName = "PLANET")
-public class PlanetEntity {
+public class Planet {
 	private String id;
 	private String nome;
 	private String clima;
 	private String terreno;
 	
-	@DynamoDBAttribute
+	@DynamoDBHashKey
 	public String getId() {
 		return id;
 	}

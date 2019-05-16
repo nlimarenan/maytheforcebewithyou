@@ -20,17 +20,6 @@
 
 	<dependencies>
 	<dependency>
-        <groupId>org.springframework.data</groupId>
-        <artifactId>spring-data-releasetrain</artifactId>
-        <version>Hopper-SR10</version>
-        <type>pom</type>
-        <scope>import</scope>
-        </dependency>
-		<!--dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency-->
-		<dependency>
         <groupId>com.amazonaws</groupId>
         <artifactId>aws-java-sdk-dynamodb</artifactId>
         <version>1.11.34</version>
@@ -38,7 +27,7 @@
     <dependency>
         <groupId>com.github.derjust</groupId>
         <artifactId>spring-data-dynamodb</artifactId>
-        <version>4.3.1</version>
+        <version>5.0.2</version>
     </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
