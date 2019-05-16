@@ -30,6 +30,7 @@ public class PlanetController {
 	
 	@RequestMapping(value = "/savePlanet", method = RequestMethod.POST, produces="application/json", consumes="application/json")
 	public ResponseEntity<SavePlanetResponse> createPlanet(@RequestBody SavePlanetRequest request) {
+		
 		SavePlanetResponse response = this.service.savePlanet(request);
 		
 		return ResponseEntity.ok().body(response);
@@ -37,6 +38,7 @@ public class PlanetController {
 
 	@RequestMapping(value = "/showLocalPlanets", method = RequestMethod.GET, produces="application/json", consumes="application/json")
 	public ResponseEntity<List<ShowPlanetResponse>> showPlanets() {
+		
 		List<ShowPlanetResponse> response = this.service.showLocalPlanets();
 		return ResponseEntity.ok().body(response);
 	}

@@ -12,18 +12,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.game.entity.Planet;
+import com.game.repository.PlanetRepository;
 import com.game.request.SavePlanetRequest;
 import com.game.response.SavePlanetResponse;
 import com.game.response.ShowPlanetResponse;
 
 @Service
-public class PlanetService {
+public class PlanetService {	
 	
-	
+	@Autowired
+	PlanetRepository repository;
 	
 	public SavePlanetResponse savePlanet(SavePlanetRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		Planet saved = repository.save(new Planet());
+		SavePlanetResponse response = new SavePlanetResponse();
+		response.setId(saved.getId());
+		return response;
 	}
 
 	public List<ShowPlanetResponse> showLocalPlanets() {
