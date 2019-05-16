@@ -4,7 +4,20 @@ public class ShowPlanetResponse {
 	private String nome;
 	private String clima;
 	private String terreno;
-	private Integer qtdAparicoes;
+	private String qtdAparicoes;
+	
+	public ShowPlanetResponse(String nome, String clima, String terreno, String qtdAparicoes) {
+		this.nome = nome;
+		this.clima = clima;
+		this.terreno = terreno;
+		this.qtdAparicoes = qtdAparicoes;
+
+	}
+	
+	public ShowPlanetResponse() {
+		super();
+	}
+	
 	public String getNome() {
 		return nome;
 	}
@@ -23,10 +36,10 @@ public class ShowPlanetResponse {
 	public void setTerreno(String terreno) {
 		this.terreno = terreno;
 	}
-	public Integer getQtdAparicoes() {
+	public String getQtdAparicoes() {
 		return qtdAparicoes;
 	}
-	public void setQtdAparicoes(Integer qtdAparicoes) {
+	public void setQtdAparicoes(String qtdAparicoes) {
 		this.qtdAparicoes = qtdAparicoes;
 	}
 }

@@ -3,6 +3,7 @@ package com.game.entity;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.game.response.ShowPlanetResponse;
 
 
 @DynamoDBTable(tableName = "PLANET")
@@ -11,6 +12,7 @@ public class Planet {
 	private String nome;
 	private String clima;
 	private String terreno;
+	private String qtdAparicoes;
 	
 	@DynamoDBHashKey
 	public String getId() {
@@ -44,4 +46,24 @@ public class Planet {
 	public void setTerreno(String terreno) {
 		this.terreno = terreno;
 	}
+	
+	public String getQtdAparicoes() {
+		return qtdAparicoes;
+	}
+
+	public void setQtdAparicoes(String qtdAparicoes) {
+		this.qtdAparicoes = qtdAparicoes;
+	}
+
+	public static ShowPlanetResponse convertEntityToResponse(Planet planet) {
+		
+		ShowPlanetResponse response = new ShowPlanetResponse();
+		response.setClima(planet.getClima());
+		response.setNome(planet.getNome());
+		response.setTerreno(planet.getTerreno());
+		response.setQtdAparicoes(planet.getQtdAparicoes());
+		
+		return response;
+	}
+	
 }

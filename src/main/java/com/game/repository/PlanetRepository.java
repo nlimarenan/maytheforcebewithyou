@@ -1,5 +1,6 @@
 package com.game.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;

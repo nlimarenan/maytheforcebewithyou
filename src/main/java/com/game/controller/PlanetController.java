@@ -28,50 +28,55 @@ public class PlanetController {
 		return ResponseEntity.ok().body("May The Force Be With You!");
 	}
 	
+	
 	@RequestMapping(value = "/savePlanet", method = RequestMethod.POST, produces="application/json", consumes="application/json")
 	public ResponseEntity<SavePlanetResponse> createPlanet(@RequestBody SavePlanetRequest request) {
 		
-		SavePlanetResponse response = this.service.savePlanet(request);
-		
-		return ResponseEntity.ok().body(response);
+		return this.service.savePlanet(request);
 	}
 
+	
 	@RequestMapping(value = "/showLocalPlanets", method = RequestMethod.GET, produces="application/json", consumes="application/json")
 	public ResponseEntity<List<ShowPlanetResponse>> showPlanets() {
-		
-		List<ShowPlanetResponse> response = this.service.showLocalPlanets();
-		return ResponseEntity.ok().body(response);
+				
+		return this.service.showLocalPlanets();
 	}
+	
 	
 	@RequestMapping(value = "/showAllPlanetsFromApi/page/{pageNumber}", method = RequestMethod.GET, produces="application/json", consumes="application/json")
 	public ResponseEntity<String> showAllPlanetsPageByPage(@PathVariable Integer pageNumber) {
-		return this.service.showAllPlanets(pageNumber);
+		return this.service.showAllPlanetsFromApi(pageNumber);
 	}
+	
 	
 	@RequestMapping(value = "/showPlanetFromApi/{id}", method = RequestMethod.GET, produces="application/json", consumes="application/json")
 	public ResponseEntity<String> showPlanet(@PathVariable Integer id){
 		
-		return this.service.showPlanet(id);
+		return this.service.showPlanetFromApi(id);
 	}
+	
 	
 	@RequestMapping(value = "/showPlanetByName/{planetName}", method = RequestMethod.GET, produces="application/json", consumes="application/json")
 	public ResponseEntity<ShowPlanetResponse> showPlanetByName(@PathVariable String planetName) {
-		ShowPlanetResponse response = this.service.showPlanetByName(planetName);
-		return ResponseEntity.ok().body(response);
+		
+		return this.service.showPlanetByName(planetName);
 	}
+	
 	
 	@RequestMapping(value = "/showPlanetById/{id}", method = RequestMethod.GET, produces="application/json", consumes="application/json")
-	public ResponseEntity<ShowPlanetResponse> showAPlanetById(@PathVariable Integer id) {
-		ShowPlanetResponse response = this.service.showPlanetById(id);
-		return ResponseEntity.ok().body(response);
+	public ResponseEntity<ShowPlanetResponse> showAPlanetById(@PathVariable String id) {
+		
+		return this.service.showPlanetById(id);
 	}
 	
+	
 	@RequestMapping(value = "/destroyPlanetById/{id}", method = RequestMethod.GET, produces="application/json", consumes="application/json")
-	public void destroyPlanetById(@PathVariable Integer id) {
+	public void destroyPlanetById(@PathVariable String id) {
 		this.service.destroyPlanetById(id);
 	}
 	
-	@RequestMapping(value = "/destroyPlanetName/{planetName}", method = RequestMethod.GET, produces="application/json", consumes="application/json")
+	
+	@RequestMapping(value = "/destroyPlanetByName/{planetName}", method = RequestMethod.GET, produces="application/json", consumes="application/json")
 	public void destroyPlanetByName(@PathVariable String planetName) {
 		this.service.destroyPlanetByName(planetName);
 	}
