@@ -25,7 +25,7 @@ public class PlanetController {
 	@RequestMapping(value = "/ping", method = RequestMethod.GET, produces="application/json", consumes="application/json")
 	public ResponseEntity<String> ping() {
 		
-		return ResponseEntity.ok().body("May The Force Be You You!");
+		return ResponseEntity.ok().body("May The Force Be With You!");
 	}
 	
 	@RequestMapping(value = "/savePlanet", method = RequestMethod.POST, produces="application/json", consumes="application/json")
