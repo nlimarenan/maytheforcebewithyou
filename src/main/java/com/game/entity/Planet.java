@@ -62,6 +62,7 @@ public class Planet {
 	public static ShowPlanetResponse convertEntityToResponse(Planet planet) {
 		
 		ShowPlanetResponse response = new ShowPlanetResponse();
+		response.setId(planet.getId());
 		response.setClima(planet.getClima());
 		response.setNome(planet.getNome());
 		response.setTerreno(planet.getTerreno());

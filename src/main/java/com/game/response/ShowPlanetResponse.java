@@ -1,23 +1,20 @@
 package com.game.response;
 
 public class ShowPlanetResponse {
+	
+	private String id;
 	private String nome;
 	private String clima;
 	private String terreno;
 	private String qtdAparicoes;
 	
-	public ShowPlanetResponse(String nome, String clima, String terreno, String qtdAparicoes) {
-		this.nome = nome;
-		this.clima = clima;
-		this.terreno = terreno;
-		this.qtdAparicoes = qtdAparicoes;
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 
-	}
-	
-	public ShowPlanetResponse() {
-		super();
-	}
-	
 	public String getNome() {
 		return nome;
 	}
@@ -42,5 +39,6 @@ public class ShowPlanetResponse {
 	public void setQtdAparicoes(String qtdAparicoes) {
 		this.qtdAparicoes = qtdAparicoes;
 	}
+
 }
 
