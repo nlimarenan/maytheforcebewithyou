@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,12 +36,20 @@ import com.game.response.ShowPlanetResponse;
 @Service
 public class PlanetService {	
 	
+	private final String URL = "https://swapi.co/api/planets/";
+	private final String USER_AGENTS = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36";
+	
 	@Autowired
 	PlanetRepository repository;
+	
+	@Autowired
+	HttpServletResponse httpResponse;
 	
 	public ResponseEntity<SavePlanetResponse> savePlanet(SavePlanetRequest request) {
 		
 		//todo implementar logica de pegar a quantidade de vezes de aparicoes nos filmes
+		
+		
 		Planet saved = repository.save(new Planet());
 		SavePlanetResponse response = new SavePlanetResponse();
 		response.setId(saved.getId());
@@ -56,15 +66,13 @@ public class PlanetService {
 		return new ResponseEntity<>(comeToTheDarkSideConversion,HttpStatus.OK);
 	}
 
-	public ResponseEntity<String> showAllPlanetsFromApi(Integer pageNumber) {
+	public ResponseEntity<String> showAllPlanetsFromApi() {
 		
-		//TODO por strings em final
-		
-		final String uri = "https://swapi.co/api/planets/?page="+pageNumber;
+		final String uri = URL;
 		RestTemplate requestTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+        headers.add("user-agent", USER_AGENTS);
         HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
 		ResponseEntity<String> result = requestTemplate.exchange(uri,HttpMethod.GET,entity, String.class);
 		
@@ -121,22 +129,34 @@ public class PlanetService {
 		
 		Table table = pickTable();
 		
+		QuerySpec spec = new QuerySpec();
+		spec.withKeyConditionExpression("nome = :_nome")
+			.withValueMap(new ValueMap().withString("_nome", planetName));
+		
+		ItemCollection<QueryOutcome> planet = table.query(spec);
+		Iterator<Item> it = planet.iterator();
+		Item item = null;
+		
+		ShowPlanetResponse response = null;
+		
+		while (it.hasNext()) {
+			
+		    item = it.next();
+		    
+		    response = new ShowPlanetResponse();
+		    
+		    response.setNome(String.valueOf(item.get("nome")));
+		    response.setClima(String.valueOf(item.get("clima")));
+		    response.setQtdAparicoes(String.valueOf(item.get("qtdAparicoes")));
+		    response.setTerreno(String.valueOf(item.get("terreno")));
+		}
+		
+		if(response == null) {
+			httpResponse.setStatus(204);
+			
+			return;
+		}
 		repository.delete(new Planet());
-		
-	}
-
-	public ResponseEntity<String> showPlanetFromApi(Integer id) {
-		
-		final String uri = "https://swapi.co/api/planets/"+id;
-		RestTemplate requestTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
-        HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
-		ResponseEntity<String> result = requestTemplate.exchange(uri,HttpMethod.GET,entity, String.class);
-		
-		
-		return result;
 		
 	}
 	

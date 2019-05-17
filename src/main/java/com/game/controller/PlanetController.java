@@ -43,16 +43,9 @@ public class PlanetController {
 	}
 	
 	
-	@RequestMapping(value = "/showAllPlanetsFromApi/page/{pageNumber}", method = RequestMethod.GET, produces="application/json", consumes="application/json")
-	public ResponseEntity<String> showAllPlanetsPageByPage(@PathVariable Integer pageNumber) {
-		return this.service.showAllPlanetsFromApi(pageNumber);
-	}
-	
-	
-	@RequestMapping(value = "/showPlanetFromApi/{id}", method = RequestMethod.GET, produces="application/json", consumes="application/json")
-	public ResponseEntity<String> showPlanet(@PathVariable Integer id){
-		
-		return this.service.showPlanetFromApi(id);
+	@RequestMapping(value = "/showAllPlanetsFromApi/", method = RequestMethod.GET, produces="application/json", consumes="application/json")
+	public ResponseEntity<String> showAllPlanetsFromApi() {
+		return this.service.showAllPlanetsFromApi();
 	}
 	
 	
