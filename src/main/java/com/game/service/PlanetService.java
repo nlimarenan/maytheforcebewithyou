@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,8 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
@@ -35,10 +35,12 @@ import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.game.dynamodbconfig.DynamoDBConfig;
 import com.game.entity.Planet;
+import com.game.entity.PlanetApiReceiver;
 import com.game.repository.PlanetRepository;
 import com.game.request.SavePlanetRequest;
 import com.game.response.SavePlanetResponse;
 import com.game.response.ShowPlanetResponse;
+import com.google.gson.Gson;
 
 @Service
 public class PlanetService {	
@@ -54,10 +56,25 @@ public class PlanetService {
 	
 	public ResponseEntity<SavePlanetResponse> savePlanet(SavePlanetRequest request) {
 		
-		//todo implementar logica de pegar a quantidade de vezes de aparicoes nos filmes
+		ResponseEntity<String> planets = allThePlanets();
+		String jsonCandidate = planets.getBody();
+		JSONObject obj = new JSONObject(jsonCandidate);
+		JSONArray array = obj.getJSONArray("results");
+		Gson gson = new Gson();
+		PlanetApiReceiver [] receiver = gson.fromJson(array.toString(), PlanetApiReceiver[].class);
+		
+		List<PlanetApiReceiver> receiverList = new ArrayList<>(Arrays.asList(receiver));
+		
+		Integer qtdAparicoes = receiverList
+								.stream()
+								.filter(p -> p.getName().equalsIgnoreCase(request.getNome()))
+								.findAny()
+								.get()
+								.getFilms()
+								.size();
 		
 		
-		Planet saved = repository.save(SavePlanetRequest.convertRequestToEntity(request));
+		Planet saved = this.repository.save(SavePlanetRequest.convertRequestToEntity(qtdAparicoes,request));
 		SavePlanetResponse response = new SavePlanetResponse();
 		response.setId(saved.getId());
 		return new ResponseEntity<>(response,HttpStatus.CREATED);
@@ -66,23 +83,16 @@ public class PlanetService {
 	public ResponseEntity<List<ShowPlanetResponse>> showLocalPlanets() {
 		
 		List<Planet> planetList = new ArrayList<>();
-		Iterable<Planet> iterable = repository.findAll();
+		Iterable<Planet> iterable = this.repository.findAll();
 		
 		iterable.forEach(planetList::add);		
 		List<ShowPlanetResponse> comeToTheDarkSideConversion = planetList.stream().map(Planet::convertEntityToResponse).collect(Collectors.toList());
 		return new ResponseEntity<>(comeToTheDarkSideConversion,HttpStatus.OK);
 	}
 
-	public ResponseEntity<String> showAllPlanetsFromApi() {
+	public ResponseEntity<String> showAllPlanetsFromApi() {		
 		
-		final String uri = URL;
-		RestTemplate requestTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.add("user-agent", USER_AGENTS);
-        HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
-		ResponseEntity<String> result = requestTemplate.exchange(uri,HttpMethod.GET,entity, String.class);
-		
+		ResponseEntity<String> result = allThePlanets();		
 		
 		return result;
 	}
@@ -117,7 +127,7 @@ public class PlanetService {
 	}
 
 	public void destroyPlanetById(String id) {
-		repository.deleteById(id);
+		this.repository.deleteById(id);
 	}
 
 	public void destroyPlanetByName(String planetName) {
@@ -151,7 +161,7 @@ public class PlanetService {
 			
 			return;
 		}
-		repository.delete(new Planet());
+		this.repository.delete(new Planet());
 		
 	}
 	
@@ -167,6 +177,16 @@ public class PlanetService {
 		DynamoDBMapper mapper = new DynamoDBMapper(new DynamoDBConfig().amazonDynamoDB());
 		
 		return mapper;
+	}
+	
+	private ResponseEntity<String> allThePlanets(){
+		final String uri = URL;
+		RestTemplate requestTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        headers.add("user-agent", USER_AGENTS);
+        HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+		return requestTemplate.exchange(uri,HttpMethod.GET,entity, String.class);
 	}
 	
 }

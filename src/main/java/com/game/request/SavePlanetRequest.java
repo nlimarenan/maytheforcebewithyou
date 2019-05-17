@@ -25,12 +25,13 @@ public class SavePlanetRequest {
 		this.terreno = terreno;
 	}
 	
-	public static Planet convertRequestToEntity(SavePlanetRequest request) {
+	public static Planet convertRequestToEntity(Integer qtdAparicoes, SavePlanetRequest request) {
 		
 		Planet aNewPlanetIsBorning = new Planet();
 		aNewPlanetIsBorning.setNome(request.getNome());
 		aNewPlanetIsBorning.setClima(request.getClima());
 		aNewPlanetIsBorning.setTerreno(request.getTerreno());
+		aNewPlanetIsBorning.setQtdAparicoes(String.valueOf(qtdAparicoes));
 		
 		return aNewPlanetIsBorning;
 	}

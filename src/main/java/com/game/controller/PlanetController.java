@@ -65,7 +65,9 @@ public class PlanetController {
 	
 	@RequestMapping(value = "/destroyPlanetById/{id}", method = RequestMethod.GET, produces="application/json", consumes="application/json")
 	public void destroyPlanetById(@PathVariable String id) {
+		
 		this.service.destroyPlanetById(id);
+		
 	}
 	
 	
