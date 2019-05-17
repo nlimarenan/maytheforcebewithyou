@@ -2,8 +2,10 @@ package com.game.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -19,6 +21,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.ItemCollection;
@@ -26,6 +32,7 @@ import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.game.dynamodbconfig.DynamoDBConfig;
 import com.game.entity.Planet;
 import com.game.repository.PlanetRepository;
@@ -50,7 +57,7 @@ public class PlanetService {
 		//todo implementar logica de pegar a quantidade de vezes de aparicoes nos filmes
 		
 		
-		Planet saved = repository.save(new Planet());
+		Planet saved = repository.save(SavePlanetRequest.convertRequestToEntity(request));
 		SavePlanetResponse response = new SavePlanetResponse();
 		response.setId(saved.getId());
 		return new ResponseEntity<>(response,HttpStatus.CREATED);
@@ -80,31 +87,19 @@ public class PlanetService {
 		return result;
 	}
 
-	public ResponseEntity<ShowPlanetResponse> showPlanetByName(String planetName) {
+	public ResponseEntity<List<ShowPlanetResponse>> showPlanetByName(String planetName) {
 		
-		Table table = pickTable();
+		DynamoDBMapper mapper = pickMapper();
 		
-		QuerySpec spec = new QuerySpec();
-		spec.withKeyConditionExpression("nome = :_nome")
-			.withValueMap(new ValueMap().withString("_nome", planetName));
+		Map<String, AttributeValue> scanMap = new HashMap<String, AttributeValue>();
+		scanMap.put(":value",new AttributeValue().withS(planetName));
+		DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+													.withFilterExpression("nome = :value")
+													.withExpressionAttributeValues(scanMap);
 		
-		ItemCollection<QueryOutcome> planet = table.query(spec);
-		Iterator<Item> it = planet.iterator();
-		Item item = null;
+		List<Planet> result = mapper.scan(Planet.class, scanExpression);
 		
-		ShowPlanetResponse response = null;
-		
-		while (it.hasNext()) {
-			
-		    item = it.next();
-		    
-		    response = new ShowPlanetResponse();
-		    
-		    response.setNome(String.valueOf(item.get("nome")));
-		    response.setClima(String.valueOf(item.get("clima")));
-		    response.setQtdAparicoes(String.valueOf(item.get("qtdAparicoes")));
-		    response.setTerreno(String.valueOf(item.get("terreno")));
-		}
+		List<ShowPlanetResponse> response = result.stream().map(Planet::convertEntityToResponse).collect(Collectors.toList());
 		
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
@@ -163,9 +158,15 @@ public class PlanetService {
 	private Table pickTable() {
 		DynamoDBConfig dynamoConfig = new DynamoDBConfig();
 		DynamoDB db = new DynamoDB(dynamoConfig.amazonDynamoDB());
-		Table table = db.getTable("PLANET");
+		Table table = db.getTable("Planetas");
 		
 		return table;
+	}
+	
+	private DynamoDBMapper pickMapper() {
+		DynamoDBMapper mapper = new DynamoDBMapper(new DynamoDBConfig().amazonDynamoDB());
+		
+		return mapper;
 	}
 	
 }

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -16,10 +17,11 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 
-@Profile("dev")
 @Configuration
 @EnableDynamoDBRepositories(basePackages = "com.game.repository")
+@PropertySource(value = "classpath:application.properties")
 public class DynamoDBConfig {
+	
 	@Value("${amazon.dynamodb.endpoint}")
     private String amazonDynamoDBEndpoint;
  
@@ -37,7 +39,7 @@ public class DynamoDBConfig {
     @Bean
     public AWSCredentials amazonAWSCredentials() {
         return new BasicAWSCredentials(
-          amazonAWSAccessKey, amazonAWSSecretKey);
+          "AKIASDMHA5SLFKC3MIFI", "OleT6M4qrYJAtlP8GHTg7jtmWWlXZTP9wNeyRqaU");
     }
     
     @Bean
@@ -58,14 +60,6 @@ public class DynamoDBConfig {
     		.withCredentials(amazonAWSCredentialsProvider())
     		.withRegion(amazonDynamoDBRegion)
     		.build();
-        /*AmazonDynamoDB amazonDynamoDB 
-          = new AmazonDynamoDBClient(amazonAWSCredentials());
-         
-        if (!StringUtils.isEmpty(amazonDynamoDBEndpoint)) {
-            amazonDynamoDB.setEndpoint(amazonDynamoDBEndpoint);
-        }
-         	
-        return amazonDynamoDB;*/
     }
     
     @Bean

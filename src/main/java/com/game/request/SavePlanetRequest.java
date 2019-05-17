@@ -1,10 +1,11 @@
 package com.game.request;
 
+import com.game.entity.Planet;
+
 public class SavePlanetRequest {
 	private String nome;
 	private String clima;
 	private String terreno;
-	private Integer qtdAparicoes;
 	public String getNome() {
 		return nome;
 	}
@@ -23,10 +24,14 @@ public class SavePlanetRequest {
 	public void setTerreno(String terreno) {
 		this.terreno = terreno;
 	}
-	public Integer getQtdAparicoes() {
-		return qtdAparicoes;
+	
+	public static Planet convertRequestToEntity(SavePlanetRequest request) {
+		
+		Planet aNewPlanetIsBorning = new Planet();
+		aNewPlanetIsBorning.setNome(request.getNome());
+		aNewPlanetIsBorning.setClima(request.getClima());
+		aNewPlanetIsBorning.setTerreno(request.getTerreno());
+		
+		return aNewPlanetIsBorning;
 	}
-	public void setQtdAparicoes(Integer qtdAparicoes) {
-		this.qtdAparicoes = qtdAparicoes;
-	}	
 }

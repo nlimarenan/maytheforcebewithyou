@@ -50,7 +50,7 @@ public class PlanetController {
 	
 	
 	@RequestMapping(value = "/showPlanetByName/{planetName}", method = RequestMethod.GET, produces="application/json", consumes="application/json")
-	public ResponseEntity<ShowPlanetResponse> showPlanetByName(@PathVariable String planetName) {
+	public ResponseEntity<List<ShowPlanetResponse>> showPlanetByName(@PathVariable String planetName) {
 		
 		return this.service.showPlanetByName(planetName);
 	}
